@@ -5,4 +5,7 @@ class Orders(models.Model):
     ref_id = models.IntegerField(primary_key=True)
     customer = models.CharField(max_length=50)
     order_time = models.DateTimeField(auto_now_add=True)
-    pickup_time = models.DateTimeField()
+    pickup_time = models.DateTimeField(null=True, blank=True)
+
+    def get_success_url(self):
+        return reverse('home')

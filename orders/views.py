@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
+from django.urls import reverse
 
 from .models import Orders
 
@@ -7,3 +9,12 @@ from .models import Orders
 class OrderListView(ListView):
     model = Orders
     template_name = "home.html"
+
+
+class OrderCreateView(CreateView):
+    model = Orders
+    template_name = "order_new.html"
+    fields = ("ref_id", "customer")
+
+    def get_success_url(self):
+        return reverse('home')
