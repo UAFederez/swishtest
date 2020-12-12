@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% for order in object_list %}
+        <div>
+            <h2 style="color:#ff0000"> Order {{ order.ref_id }} </h2>
+            <p> {{ order.customer}} </p>
+        </div>
+    {% endfor %}
+
+    <a href="{% url 'order_new' %}"> Create new post </a>
+
+{% endblock content %}

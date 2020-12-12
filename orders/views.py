@@ -8,7 +8,7 @@ from .models import Orders
 # Create your views here.
 class OrderListView(ListView):
     model = Orders
-    template_name = "home.html"
+    template_name = "orders.html"
 
 
 class OrderCreateView(CreateView):
