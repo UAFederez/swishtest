@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomerCreationForm
+from .forms import CustomUserForm, CustomerUserForm
 from .models import CustomUser, Customer
 
 # Register your models here.
@@ -10,8 +10,14 @@ class CustomerInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = "customer"
 
-class CustomerUserAdmin(UserAdmin):
-    add_form = CustomerCreationForm
+
+# class EmployeeInline(admin.StackedInline):
+#     model = Employee
+#     can_delete = False
+#     verbose_name_plural = "employee"
+
+
+class CustomUserAdmin(UserAdmin):
     inlines = (CustomerInline,)
 
-admin.site.register(CustomUser, CustomerUserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)

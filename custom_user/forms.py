@@ -5,28 +5,35 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import CustomUser, Customer
 
-class CustomerUserForm(forms.ModelForm):
+class CustomUserForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name',)
 
 
-class CustomerCreationForm(CustomerUserForm):
+class CustomerUserForm(forms.ModelForm):
 
-    contact = forms.CharField(widget=forms.TextInput())
+    class Meta:
+        model = Customer
+        fields = ('contact',)
 
-    class Meta(CustomerUserForm.Meta):
-        model = CustomUser
 
-        fields = CustomerUserForm.Meta.fields + ('contact',)
-
-    @transaction.atomic
-    def save(self):
-        user = super.save(commit=False)
-        user.is_customer = True
-        user.save()
-        customer = Customer.objects.create(custom_user=user, contact=contact)
+# class CustomerCreationForm(CustomerUserForm):
+#
+#     contact = forms.CharField(widget=forms.TextInput())
+#
+#     class Meta(CustomerUserForm.Meta):
+#         model = CustomUser
+#
+#         fields = CustomerUserForm.Meta.fields + ('contact',)
+#
+#     @transaction.atomic
+#     def save(self):
+#         user = super.save(commit=False)
+#         user.is_customer = True
+#         user.save()
+#         customer = Customer.objects.create(custom_user=user, contact=contact)
 
 
 # class CustomerChangeForm(UserChangeForm):
