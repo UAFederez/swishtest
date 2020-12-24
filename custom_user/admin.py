@@ -19,5 +19,7 @@ class CustomerInline(admin.StackedInline):
 
 class CustomUserAdmin(UserAdmin):
     inlines = (CustomerInline,)
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_customer', 'is_employee')
+
 
 admin.site.register(CustomUser, CustomUserAdmin)
