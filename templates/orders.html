@@ -8,6 +8,8 @@
         </div>
     {% endfor %}
 
-    <a href="{% url 'order_new' %}"> Create new post </a>
+    {# {% if request.user.is_customer %} #}
+        <a href="{% url 'order_new' %}"> Create new order </a>
+    {# {% endif %} #}
 
 {% endblock content %}

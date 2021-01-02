@@ -7,7 +7,7 @@
     <form method="post">
         {% csrf_token %}
         {{ customuser_form.as_p }}
-        {{ customeruser_form.as_p }}
+        {{ employeeuser_form.as_p }}
 
         {% if customuser_form.errors %}
             {% for field in form %}

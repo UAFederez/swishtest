@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2> Log in </h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_email">Email:</label>
+        <input type="text" name="email" autofocus="" required="" id="id_email">
+
+        <label for="id_password">Password:</label>
+        <input type="password" name="password" required="" id="id_password">
+
+        {% if error %}
+            <p> Wrong email or password </p>
+        {% endif %}
+
+        <button type="submit"> Login </button>
+    </form>
+
+{% endblock content %}

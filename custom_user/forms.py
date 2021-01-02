@@ -3,13 +3,29 @@ from django.db import transaction
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import CustomUser, Customer
+from .models import CustomUser, Customer, Employee
 
 class CustomUserForm(forms.ModelForm):
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name',)
+        fields = ('email', 'password', 'confirm_password', 'first_name', 'last_name',)
+        widgets = {
+                   'password': forms.PasswordInput(),
+                   'confirm_password': forms.PasswordInput(),
+        }
+
+
+    def clean(self):
+        cleaned_data = super(CustomUserForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise forms.ValidationError(
+                "password and confirm_password does not match"
+            )
 
 
 class CustomerUserForm(forms.ModelForm):
@@ -19,28 +35,9 @@ class CustomerUserForm(forms.ModelForm):
         fields = ('contact',)
 
 
-# class CustomerCreationForm(CustomerUserForm):
-#
-#     contact = forms.CharField(widget=forms.TextInput())
-#
-#     class Meta(CustomerUserForm.Meta):
-#         model = CustomUser
-#
-#         fields = CustomerUserForm.Meta.fields + ('contact',)
-#
-#     @transaction.atomic
-#     def save(self):
-#         user = super.save(commit=False)
-#         user.is_customer = True
-#         user.save()
-#         customer = Customer.objects.create(custom_user=user, contact=contact)
 
+class EmployeeUserForm(forms.ModelForm):
 
-# class CustomerChangeForm(UserChangeForm):
-#
-#     contact = forms.CharField()
-#
-#     class Meta(UserChangeForm):
-#         class Meta:
-#             model = CustomUser
-#             fields = ("username", "email", "contact",)
+    class Meta:
+        model = Employee
+        fields = ('start_date',)
