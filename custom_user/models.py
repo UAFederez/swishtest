@@ -18,6 +18,7 @@ class Customer(models.Model):
                                        on_delete=models.CASCADE,
                                        primary_key=True)
     contact = models.CharField(max_length=20)
+    saved_address = models.CharField(max_length=100, blank=True)
 
 
 class Employee(models.Model):
