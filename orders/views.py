@@ -18,59 +18,43 @@ class OrderCreateView(View):
     template_name = "order_new.html"
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_customer:
-            baseorder_form = BaseOrderForm(request.POST, prefix="baseorder_form")
+        customuser_form = WalkInUserForm(request.POST, prefix='customuser_form')
+        customeruser_form = WalkInCustomerForm(request.POST, prefix='customeruser_form')
+        baseorder_form = BaseOrderForm(request.POST, prefix="baseorder_form")
 
-            if baseorder_form.is_valid():
-                order_form = baseorder_form.save(commit=False)
+        if baseorder_form.is_valid():
+            order_form = baseorder_form.save(commit=False)
+            order_form.status = 1
+
+            if request.user.is_employee or request.user.is_superuser:
+                if customuser_form.is_valid() and customeruser_form.is_valid():
+                    uform = customuser_form.save(commit=False)
+                    uform.is_customer = True
+                    uform.save()
+
+                    cuform = customeruser_form.save(commit=False)
+                    cuform.custom_user = uform
+                    cuform.save()
+
+                    order_form.customer = cuform
+
+                else:
+                    return render(request, 'order_new.html', {'baseorder_form': baseorder_form, 'customuser_form': customuser_form, 'customeruser_form': customeruser_form})
+
+            elif request.user.is_customer:
                 order_form.customer = request.user.customer
-                order_form.status = 1
 
-                # FILLER VALUES
-                order_form.delivery_price = 128
-                order_form.service_price = 50
-                order_form.weight = 2
+            # FILLER VALUES
+            order_form.delivery_price = 128
+            order_form.service_price = 50
+            order_form.weight = 2
 
-                order_form.save()
+            order_form.save()
 
-                return HttpResponseRedirect(reverse_lazy('home'))
+            return HttpResponseRedirect(reverse_lazy('home'))
 
-            else:
-                return render(request, 'order_new.html', {'baseorder_form': baseorder_form})
-
-        elif request.user.is_employee or request.user.is_superuser:
-            customuser_form = WalkInUserForm(request.POST, prefix='customuser_form')
-            customeruser_form = WalkInCustomerForm(request.POST, prefix='customeruser_form')
-            baseorder_form = BaseOrderForm(request.POST, prefix="baseorder_form")
-
-            print("Inside if employee")
-
-            if baseorder_form.is_valid() and  customuser_form.is_valid() and customeruser_form.is_valid():
-                print("Inside if employee and valid forms")
-
-                uform = customuser_form.save(commit=False)
-                uform.is_customer = True
-                uform.save()
-
-                cuform = customeruser_form.save(commit=False)
-                cuform.custom_user = uform
-                cuform.save()
-
-                order_form = baseorder_form.save(commit=False)
-                order_form.customer = cuform
-                order_form.status = 1
-
-                # FILLER VALUES
-                order_form.delivery_price = 128
-                order_form.service_price = 50
-                order_form.weight = 2
-
-                order_form.save()
-
-                return HttpResponseRedirect(reverse_lazy('home'))
-
-            else:
-                return render(request, 'order_new.html', {'baseorder_form': baseorder_form, 'customuser_form': customuser_form, 'customeruser_form': customeruser_form})
+        else:
+            return render(request, 'order_new.html', {'baseorder_form': baseorder_form, 'customuser_form': customuser_form, 'customeruser_form': customeruser_form})
 
 
     def get(self, request):
