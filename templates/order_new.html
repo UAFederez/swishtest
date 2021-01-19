@@ -4,6 +4,9 @@
     <h2>New order</h2>
     <form action="" method="post">
         {% csrf_token %}
+        {{ customuser_form.as_p }}
+        {{ customeruser_form.as_p }}
+
         {{ baseorder_form.as_p }}
         <button type="submit">Save</button>
     </form>
