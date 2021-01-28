@@ -27,6 +27,10 @@ class CustomUserForm(forms.ModelForm):
                 "password and confirm_password does not match"
             )
 
+class EditCustomerCustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ('email',)
 
 class CustomerUserForm(forms.ModelForm):
 

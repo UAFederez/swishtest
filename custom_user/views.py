@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 
-from .forms import CustomUserForm, CustomerUserForm, EmployeeUserForm
+from .forms import CustomUserForm, CustomerUserForm, EmployeeUserForm, EditCustomerCustomUserForm
 from .models import CustomUser
 
 # Create your views here.
@@ -90,6 +90,30 @@ class UserLoginView(View):
     def get(self, request):
         return render(request, 'registration/login.html', {'error': False})
 
+class CustomerEditProfileView(View):
+    def post(self, request, *args, **kwargs):
+        customuser_form = EditCustomerCustomUserForm(request.POST, instance = request.user)
+        customer_form   = CustomerUserForm(request.POST, instance = request.user)
+
+        if customuser_form.is_valid() and customer_form.is_valid():
+            customuser_form.save()
+            customer_form.save()
+
+            return HttpResponseRedirect(reverse_lazy('home'))
+        else:
+            return render(request, 'edit_profile.html', {
+                    'customuser_form': customuser_form,
+                    'customer_form'  : customer_form
+                })
+
+    def get(self, request):
+        customuser_form = EditCustomerCustomUserForm()
+        customer_form   = CustomerUserForm()
+
+        return render(request, 'edit_profile.html', {
+                'customuser_form': customuser_form,
+                'customer_form'  : customer_form
+            })
 
 def get_user(email):
     try:

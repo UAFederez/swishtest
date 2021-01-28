@@ -2,7 +2,8 @@
 {% block content %}
 
     {% if user.is_authenticated %}
-        <a href="{% url 'order_view' %}">View Orders</a>
+        <a href="{% url 'order_view' %}">View Orders</a><br/>
+        <a href="{% url 'customer_edit_profile' %}">Edit Customer Profile</a>
 
         {% if user.is_superuser %}
         <a href="{% url 'employee_add' %}">Add employee</a>

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% if user.is_authenticated %}
+        <h2>Edit Customer Profile</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ customuser_form.as_p }}
+            {{ customer_form.as_p }}
+            <button type="submit" > Save </button>
+        </form>
+    {% endif %}
+{% endblock content %}
