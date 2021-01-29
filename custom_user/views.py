@@ -3,9 +3,10 @@ from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .forms import CustomUserForm, CustomerUserForm, EmployeeUserForm, EditCustomerCustomUserForm
-from .models import CustomUser
+from .forms import CustomUserForm, CustomerUserForm, EmployeeUserForm, EditUserForm
+from .models import CustomUser, Customer
 
 # Create your views here.
 class CustomerSignUpView(View):
@@ -92,10 +93,11 @@ class UserLoginView(View):
 
 class CustomerEditProfileView(View):
     def post(self, request, *args, **kwargs):
-        customuser_form = EditCustomerCustomUserForm(request.POST, instance = request.user)
-        customer_form   = CustomerUserForm(request.POST, instance = request.user)
+        customer        = get_customer(request.user)
+        customer_form   = CustomerUserForm(request.POST, instance = customer)
+        customuser_form = EditUserForm(request.POST, instance = request.user)
 
-        if customuser_form.is_valid() and customer_form.is_valid():
+        if customuser_form.is_valid():
             customuser_form.save()
             customer_form.save()
 
@@ -107,13 +109,20 @@ class CustomerEditProfileView(View):
                 })
 
     def get(self, request):
-        customuser_form = EditCustomerCustomUserForm()
-        customer_form   = CustomerUserForm()
+        customer        = get_customer(request.user)
+        customer_form   = CustomerUserForm(instance = customer)
+        customuser_form = EditUserForm(instance = request.user)
 
         return render(request, 'edit_profile.html', {
                 'customuser_form': customuser_form,
-                'customer_form'  : customer_form
+                'customer_form':   customer_form
             })
+
+def get_customer(custom_user):
+    try:
+        return Customer.objects.get(custom_user=custom_user)
+    except Customer.DoesNotExist:
+        return None
 
 def get_user(email):
     try:
