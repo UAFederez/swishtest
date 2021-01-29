@@ -3,7 +3,7 @@ from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 
 from .forms import CustomUserForm, CustomerUserForm, EmployeeUserForm, EditUserForm
 from .models import CustomUser, Customer
@@ -96,26 +96,31 @@ class CustomerEditProfileView(View):
         customer        = get_customer(request.user)
         customer_form   = CustomerUserForm(request.POST, instance = customer)
         customuser_form = EditUserForm(request.POST, instance = request.user)
+        password_form   = PasswordChangeForm(request.user, request.POST)
 
-        if customuser_form.is_valid():
+        if customuser_form.is_valid() and customer_form.is_valid() and password_form.is_valid():
             customuser_form.save()
             customer_form.save()
+            password_form.save()
 
             return HttpResponseRedirect(reverse_lazy('home'))
         else:
             return render(request, 'edit_profile.html', {
                     'customuser_form': customuser_form,
-                    'customer_form'  : customer_form
+                    'customer_form'  : customer_form,
+                    'password_form'  : password_form
                 })
 
     def get(self, request):
         customer        = get_customer(request.user)
         customer_form   = CustomerUserForm(instance = customer)
         customuser_form = EditUserForm(instance = request.user)
+        password_form   = PasswordChangeForm(request.user)
 
         return render(request, 'edit_profile.html', {
                 'customuser_form': customuser_form,
-                'customer_form':   customer_form
+                'customer_form'  : customer_form,
+                'password_form'  : password_form
             })
 
 def get_customer(custom_user):

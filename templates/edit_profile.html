@@ -7,6 +7,7 @@
             {% csrf_token %}
             {{ customuser_form.as_p }}
             {{ customer_form.as_p }}
+            {{ password_form.as_p }} 
             <button type="submit" > Save </button>
         </form>
     {% endif %}
