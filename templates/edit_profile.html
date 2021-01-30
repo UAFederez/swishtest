@@ -7,8 +7,9 @@
             {% csrf_token %}
             {{ customuser_form.as_p }}
             {{ customer_form.as_p }}
-            {{ password_form.as_p }} 
+
             <button type="submit"> Save </button>
+            <p><a href="{% url 'user_edit_password' %}">Change your password</a></p>
         </form>
     {% endif %}
 {% endblock content %}

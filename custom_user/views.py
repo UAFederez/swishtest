@@ -96,32 +96,47 @@ class CustomerEditProfileView(View):
         customer        = get_customer(request.user)
         customer_form   = CustomerUserForm(request.POST, instance = customer)
         customuser_form = EditUserForm(request.POST, instance = request.user)
-        password_form   = PasswordChangeForm(request.user, request.POST)
 
-        if customuser_form.is_valid() and customer_form.is_valid() and password_form.is_valid():
+        if customuser_form.is_valid() and customer_form.is_valid():
             customuser_form.save()
             customer_form.save()
-            password_form.save()
 
             return HttpResponseRedirect(reverse_lazy('home'))
         else:
             return render(request, 'edit_profile.html', {
                     'customuser_form': customuser_form,
                     'customer_form'  : customer_form,
-                    'password_form'  : password_form
                 })
 
     def get(self, request):
         customer        = get_customer(request.user)
         customer_form   = CustomerUserForm(instance = customer)
         customuser_form = EditUserForm(instance = request.user)
-        password_form   = PasswordChangeForm(request.user)
 
         return render(request, 'edit_profile.html', {
                 'customuser_form': customuser_form,
                 'customer_form'  : customer_form,
-                'password_form'  : password_form
             })
+
+class EditUserPasswordView(View):
+    def post(self, request, *args, **kwargs):
+        password_form = PasswordChangeForm(request.user, request.POST)
+
+        if password_form.is_valid():
+            password_form.save()
+            return HttpResponseRedirect(reverse_lazy('home'))
+        else:
+            return render(request, 'edit_password.html', {
+                    'password_form': password_form
+                })
+
+    def get(self, request):
+        password_form   = PasswordChangeForm(request.user)
+
+        return render(request, 'edit_password.html', {
+                'password_form': password_form
+            })
+
 
 def get_customer(custom_user):
     try:
