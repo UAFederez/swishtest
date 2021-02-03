@@ -2,6 +2,7 @@
 {% block content %}
 
     <form action = "{% url 'search_customer' %}" method = "get">
+        {% csrf_token %}
         <select name = "filter" id="filter">
             <option value = "name"> Name</option>
             <option value = "email">E-mail</option>
@@ -10,14 +11,24 @@
         <button type = "submit"> Search </button>
     </form>
 
-    {% for customer in object_list %}
-    <div>
-        <a href="{% url 'order_new' uid=customer.username %}"> 
-        <h2>{{ customer.first_name }} {{ customer.last_name  }}</h2>
-        </a>
-        <p>{{ customer.email }} </p>
-    </div>
-    {% endfor %}
+    {% if object_list %}
+        <form method = "post">
+        {% csrf_token %}
+        {% for customer in object_list %}
+            <div>
+                <input type = "radio" id = "username" name = "username" value = " {{ customer.username }}" required>
+                <label for = "{{ customer.username }}">{{ customer.first_name }} {{ customer.last_name  }} ({{ customer.email }})</label>
+            </div>
+        {% endfor %}
+        <br/>
+        <button type = "submit">Proceed to Orders</button>
+        </form>
+
+    {% else %}
+    <p>No matches could be found.
+        <a href = "{% url 'order_new' %}">Create an order for a new customer instead.</a>
+    </p>
+    {% endif %}
 
 
 {% endblock content %}

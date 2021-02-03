@@ -21,7 +21,7 @@ class OrderCreateView(View):
     template_name = "order_new.html"
 
     def post(self, request, *args, **kwargs):
-        customer_uid      = request.POST.get("uid_opt", 0)
+        customer_uid      = (request.session['uname_create_order_existing'] if 'uname_create_order_existing' in request.session else 0)
         customuser_form   = WalkInUserForm(request.POST, prefix='customuser_form')
         customeruser_form = WalkInCustomerForm(request.POST, prefix='customeruser_form')
         baseorder_form    = BaseOrderForm(request.POST, prefix="baseorder_form")
@@ -35,6 +35,7 @@ class OrderCreateView(View):
                     custom_user         = get_customer_by_uuid(customer_uid)
                     customer            = Customer.objects.get(custom_user = custom_user)
                     order_form.customer = customer
+                    del request.session['uname_create_order_existing']
                 elif customuser_form.is_valid() and customeruser_form.is_valid():
                     uform = customuser_form.save(commit=False)
                     uform.is_customer = True
@@ -76,13 +77,14 @@ class OrderCreateView(View):
 
 
     def get(self, request, uid = None):
-        customuser_form = None
+        customer_uid      = (request.session['uname_create_order_existing'] if 'uname_create_order_existing' in request.session else 0)
+        customuser_form   = None
         customeruser_form = None
 
         if request.user.is_employee or request.user.is_superuser:
 
-            if uid:
-                print("UID:", uid)
+            if customer_uid:
+                print("UID:", customer_uid)
             else:
                 customuser_form = WalkInUserForm(prefix='customuser_form')
                 customeruser_form = WalkInCustomerForm(prefix='customeruser_form')
@@ -114,6 +116,12 @@ class CustomerSearchView(ListView):
 
         else:
             return CustomUser.objects.filter( Q( is_customer = True ) )
+
+    def post(self, request):
+        username = self.request.POST.get('username')
+        request.session['uname_create_order_existing'] = username.strip()
+        return HttpResponseRedirect("new")
+
 
 def get_customer_by_uuid(uuid):
     try:
