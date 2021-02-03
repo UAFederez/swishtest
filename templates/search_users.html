@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action = "{% url 'search_customer' %}" method = "get">
+        <select name = "filter" id="filter">
+            <option value = "name"> Name</option>
+            <option value = "email">E-mail</option>
+        </select>
+        <input name = "query" type = "text" placeholder = "Search">
+        <button type = "submit"> Search </button>
+    </form>
+
+    {% for customer in object_list %}
+    <div>
+        <a href="{% url 'order_new' uid=customer.username %}"> 
+        <h2>{{ customer.first_name }} {{ customer.last_name  }}</h2>
+        </a>
+        <p>{{ customer.email }} </p>
+    </div>
+    {% endfor %}
+
+
+{% endblock content %}
