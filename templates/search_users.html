@@ -2,7 +2,6 @@
 {% block content %}
 
     <form action = "{% url 'search_customer' %}" method = "get">
-        {% csrf_token %}
         <select name = "filter" id="filter">
             <option value = "name"> Name</option>
             <option value = "email">E-mail</option>
@@ -16,8 +15,10 @@
         {% csrf_token %}
         {% for customer in object_list %}
             <div>
-                <input type = "radio" id = "username" name = "username" value = " {{ customer.username }}" required>
-                <label for = "{{ customer.username }}">{{ customer.first_name }} {{ customer.last_name  }} ({{ customer.email }})</label>
+                <input type = "radio" id = "username" name = "username" value = " {{ customer.custom_user.username }}" required>
+                <label for = "{{ customer.custom_user.username }}">
+                    {{ customer.custom_user.first_name }} {{ customer.custom_user.last_name  }} ({{ customer.custom_user.email }})
+                </label>
             </div>
         {% endfor %}
         <br/>

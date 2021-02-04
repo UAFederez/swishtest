@@ -49,10 +49,10 @@ class OrderCreateView(View):
 
                 else:
                     return render(request, 'order_new.html', {
-                                                'baseorder_form':    baseorder_form, 
-                                                'customuser_form':   customuser_form, 
-                                                'customeruser_form': customeruser_form,
-                                                'customer_uuid_opt': 0
+                                                    'baseorder_form'   : baseorder_form, 
+                                                    'customuser_form'  : customuser_form, 
+                                                    'customeruser_form': customeruser_form,
+                                                    'customer_uuid_opt': 0
                                                 })
 
             elif request.user.is_customer:
@@ -69,10 +69,10 @@ class OrderCreateView(View):
 
         else:
             return render(request, 'order_new.html', {
-                                        'baseorder_form':    baseorder_form, 
-                                        'customuser_form':   customuser_form, 
-                                        'customeruser_form': customeruser_form,
-                                        'customer_uuid_opt': 0
+                                            'baseorder_form'   : baseorder_form, 
+                                            'customuser_form'  : customuser_form, 
+                                            'customeruser_form': customeruser_form,
+                                            'customer_uuid_opt': 0
                                         })
 
 
@@ -91,15 +91,15 @@ class OrderCreateView(View):
 
         baseorder_form = BaseOrderForm(prefix="baseorder_form")
         return render(request, 'order_new.html', {
-                                    'baseorder_form':    baseorder_form, 
-                                    'customuser_form':   customuser_form, 
-                                    'customeruser_form': customeruser_form,
-                                    'customer_uuid_opt': uid
+                                        'baseorder_form'   : baseorder_form, 
+                                        'customuser_form'  : customuser_form, 
+                                        'customeruser_form': customeruser_form,
+                                        'customer_uuid_opt': uid
                                     })
 
 
 class CustomerSearchView(ListView):
-    model = CustomUser
+    model = Customer
     template_name = "search_users.html"
 
     def get_queryset(self):
@@ -107,15 +107,13 @@ class CustomerSearchView(ListView):
         filter_by = self.request.GET.get('filter')
         if query:
             if filter_by == "name":
-                return CustomUser.objects.filter( Q( is_customer          = True ),
-                                                  Q( first_name__contains = query) | 
-                                                  Q( last_name__contains  = query) )
+                return Customer.objects.filter( Q( custom_user__first_name__contains = query ) | 
+                                                Q( custom_user__last_name__contains  = query ) )
             else:
-                return CustomUser.objects.filter( Q( is_customer     = True ),
-                                                  Q( email__contains = query) )
+                return Customer.objects.filter( Q( custom_user__email__contains = query) )
 
         else:
-            return CustomUser.objects.filter( Q( is_customer = True ) )
+            return Customer.objects.all()
 
     def post(self, request):
         username = self.request.POST.get('username')
