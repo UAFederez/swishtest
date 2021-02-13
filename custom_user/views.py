@@ -137,7 +137,6 @@ class EditUserPasswordView(View):
                 'password_form': password_form
             })
 
-
 def get_customer(custom_user):
     try:
         return Customer.objects.get(custom_user=custom_user)
